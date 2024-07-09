@@ -1,4 +1,5 @@
 package com.example.noteitweb.service.impl;
+
 import com.example.noteitweb.entity.Note;
 import com.example.noteitweb.entity.User;
 import com.example.noteitweb.pojo.NotePojo;
@@ -13,19 +14,19 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class NoteServiceImpl implements NoteService {
+
     private final NoteRepository noteRepository;
+
     private final UserRepository userRepository;
 
     @Override
     public void saveData(NotePojo notePojo) {
         Note note = new Note();
-
-        note.setId(note.getId());
         note.setTitle(notePojo.getTitle());
         note.setContent(notePojo.getContent());
-        User user = userRepository.findById(notePojo.getUser_id()).get();
+        User user = userRepository.findById(notePojo.getUser_id())
+                .orElseThrow(() -> new RuntimeException("User not found"));
         note.setUser(user);
-
         noteRepository.save(note);
     }
 
@@ -33,4 +34,24 @@ public class NoteServiceImpl implements NoteService {
     public List<Note> findAll() {
         return noteRepository.findAll();
     }
+
+    @Override
+    public void updateData(Integer id, NotePojo notePojo) {
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Note not found"));
+        note.setTitle(notePojo.getTitle());
+        note.setContent(notePojo.getContent());
+        User user = userRepository.findById(notePojo.getUser_id())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        note.setUser(user);
+        noteRepository.save(note);
+    }
+    @Override
+    public void deleteData(Integer id) {
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Note not found"));
+        noteRepository.delete(note);
+    }
+
+
 }

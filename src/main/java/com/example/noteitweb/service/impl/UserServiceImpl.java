@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -16,12 +15,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void saveData(UserPojo userPojo) {
-
         User user = new User();
-        user.setId(userPojo.getId());
+        user.setId(userPojo.getId()); // Set the Long ID directly
         user.setFullName(userPojo.getFullName());
-
+        // Add more fields as needed
         userRepository.save(user);
-
     }
 }
