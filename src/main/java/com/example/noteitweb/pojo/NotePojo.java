@@ -12,4 +12,5 @@ public class NotePojo {
     private String title;
     private String content;
     private Integer user_id;
+
 }

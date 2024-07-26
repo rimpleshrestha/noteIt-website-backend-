@@ -1,24 +1,62 @@
 package com.example.noteitweb.controller;
 
 import com.example.noteitweb.pojo.UserPojo;
+import com.example.noteitweb.entity.User;
 import com.example.noteitweb.service.UserService;
+import com.example.noteitweb.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/User")
+@RequestMapping("/api/user")
 @RequiredArgsConstructor
-
-
 public class UserController {
 
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
-    @PostMapping("/save")
-    public void save(@RequestBody UserPojo userPojo){
-        this.userService.saveData(userPojo);
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody UserPojo userPojo) {
+        User existingUser = userService.findByEmail(userPojo.getEmail());
+        if (existingUser != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
+        }
+
+        User registeredUser = userService.registerUser(userPojo);
+        return ResponseEntity.ok("User registered successfully");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticateUser(@RequestBody UserPojo userPojo) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(userPojo.getEmail(), userPojo.getPassword())
+            );
+
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String jwt = jwtUtil.generateToken(userDetails);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("token", jwt);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Invalid email or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
     }
 }

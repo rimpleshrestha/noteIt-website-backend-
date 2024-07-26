@@ -10,18 +10,22 @@ import lombok.*;
 @Builder
 @Entity
 @Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(name = "UNIQUE_user_id", columnNames = "id")
+        @UniqueConstraint(name = "UNIQUE_email", columnNames = "email")
 })
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_gen")
     @SequenceGenerator(name = "user_seq_gen", sequenceName = "user_id_seq", allocationSize = 1)
-    @GeneratedValue(generator = "user_seq_gen", strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false, unique = true)
     private Integer id;
 
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
     @Column(name = "full_name", nullable = false)
     private String fullName;
-
-    // Other fields and annotations as needed
 }

@@ -26,6 +26,8 @@ public class Note {
     @Column(name = "content", nullable = false)
     private String content;
 
+
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
