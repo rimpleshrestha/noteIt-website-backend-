@@ -16,17 +16,19 @@ import java.util.List;
 public class NoteServiceImpl implements NoteService {
 
     private final NoteRepository noteRepository;
-
     private final UserRepository userRepository;
 
     @Override
     public void saveData(NotePojo notePojo) {
+        // Validate user existence
+        User user = userRepository.findById(notePojo.getUser_id())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Create and save note
         Note note = new Note();
         note.setTitle(notePojo.getTitle());
         note.setContent(notePojo.getContent());
-        User user = userRepository.findById(notePojo.getUser_id())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        note.setUser(user);
+        note.setUser(user); // Set the user relationship
         noteRepository.save(note);
     }
 
@@ -41,11 +43,14 @@ public class NoteServiceImpl implements NoteService {
                 .orElseThrow(() -> new RuntimeException("Note not found"));
         note.setTitle(notePojo.getTitle());
         note.setContent(notePojo.getContent());
+
         User user = userRepository.findById(notePojo.getUser_id())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         note.setUser(user);
+
         noteRepository.save(note);
     }
+
     @Override
     public void deleteData(Integer id) {
         Note note = noteRepository.findById(id)
@@ -53,5 +58,8 @@ public class NoteServiceImpl implements NoteService {
         noteRepository.delete(note);
     }
 
-
+    // Add this method to find notes by user ID
+    public List<Note> findByUserId(Integer userId) {
+        return noteRepository.findAllByUser_Id(userId);
+    }
 }

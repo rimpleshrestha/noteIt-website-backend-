@@ -46,9 +46,13 @@ public class UserController {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String jwt = jwtUtil.generateToken(userDetails);
 
+            // Retrieve the user object to get the user ID
+            User user = userService.findByEmail(userPojo.getEmail());
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("token", jwt);
+            response.put("userId", user.getId()); // Add user ID to the response
 
             return ResponseEntity.ok(response);
 

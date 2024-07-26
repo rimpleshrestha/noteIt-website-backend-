@@ -20,7 +20,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void saveData(UserPojo userPojo) {
         User user = new User();
-        user.setId(userPojo.getId());
         user.setFullName(userPojo.getFullName());
         user.setEmail(userPojo.getEmail());
         user.setPassword(passwordEncoder.encode(userPojo.getPassword()));
@@ -33,14 +32,14 @@ public class UserServiceImpl implements UserService {
         user.setFullName(userPojo.getFullName());
         user.setEmail(userPojo.getEmail());
         user.setPassword(passwordEncoder.encode(userPojo.getPassword()));
-        return userRepository.save(user);
+        return userRepository.save(user); // Save and automatically generate ID
     }
 
     @Override
     public User authenticateUser(String email, String password) {
         User user = userRepository.findByEmail(email);
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-            return user;
+            return user; // User object now includes the generated ID
         }
         return null;
     }
