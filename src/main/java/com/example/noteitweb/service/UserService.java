@@ -13,4 +13,7 @@ public interface UserService extends UserDetailsService {
     User authenticateUser(String email, String password);
 
     User findByEmail(String email);
+
+    // Updated method to include old password for validation
+    boolean updatePassword(String email, String oldPassword, String newPassword);
 }

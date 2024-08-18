@@ -4,6 +4,7 @@ import com.example.noteitweb.pojo.UserPojo;
 import com.example.noteitweb.entity.User;
 import com.example.noteitweb.service.UserService;
 import com.example.noteitweb.utils.JwtUtil;
+import com.example.noteitweb.controller.PasswordChangeRequest; // Ensure the package path is correct
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +62,20 @@ public class UserController {
             errorResponse.put("success", false);
             errorResponse.put("message", "Invalid email or password");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
+    }
+
+    @PutMapping("/update-password")
+    public ResponseEntity<?> updatePassword(@RequestBody PasswordChangeRequest request) {
+        try {
+            boolean isUpdated = userService.updatePassword(request.getEmail(), request.getOldPassword(), request.getNewPassword());
+            if (isUpdated) {
+                return ResponseEntity.ok("Password updated successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Old password is incorrect");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error updating password");
         }
     }
 }
