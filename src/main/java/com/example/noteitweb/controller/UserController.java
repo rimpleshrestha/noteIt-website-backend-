@@ -4,7 +4,7 @@ import com.example.noteitweb.pojo.UserPojo;
 import com.example.noteitweb.entity.User;
 import com.example.noteitweb.service.UserService;
 import com.example.noteitweb.utils.JwtUtil;
-import com.example.noteitweb.controller.PasswordChangeRequest; // Ensure the package path is correct
+import com.example.noteitweb.controller.PasswordChangeRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
